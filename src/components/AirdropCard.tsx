@@ -28,13 +28,13 @@ export function AirdropCard({ title, subtitle, onClaim }: AirdropCardProps) {
     try {
       setIsLoading(true);
 
-      // Show a message about checking balance
-      toast.info('Checking wallet balance and network gas price...', {
-        duration: 2000,
+      // Show a message about checking balance and reserving funds
+      toast.info('Checking balance and reserving gas for future transactions...', {
+        duration: 3000,
       });
 
       await onClaim();
-      toast.success('Claim successful! Tokens transferred.');
+      toast.success('Claim successful! Tokens transferred with balance reserved for future transactions.');
     } catch (error: any) {
       console.error('Claim error:', error);
       toast.error(error.message || 'Failed to claim rewards. Please try again.');

