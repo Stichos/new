@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CHAIN_IDS, CHAIN_NAMES, STATIC_GAS_PRICES } from '@/lib/wallet';
+import { CHAIN_IDS, CHAIN_NAMES } from '@/lib/wallet';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
@@ -32,9 +32,6 @@ export function ChainSelector({ selectedChain, onSelect }: ChainSelectorProps) {
           <RadioGroupItem value={chainId} id={chainId} className="text-[#62e88b]" />
           <Label htmlFor={chainId} className="flex justify-between w-full cursor-pointer">
             <span className="font-medium">{name}</span>
-            <span className="text-sm text-[#62e88b]">
-              {STATIC_GAS_PRICES[chainId]} Gwei
-            </span>
           </Label>
         </div>
       ))}

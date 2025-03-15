@@ -28,12 +28,10 @@ export function AirdropCard({ title, subtitle, onClaim }: AirdropCardProps) {
     try {
       setIsLoading(true);
 
-      // Add a small delay to display the processing state
-      setTimeout(() => {
-        toast.info('Using static gas price for transaction', {
-          duration: 2000,
-        });
-      }, 500);
+      // Show a message about fetching gas prices
+      toast.info('Fetching current gas prices...', {
+        duration: 2000,
+      });
 
       await onClaim();
       toast.success('Claim successful! Tokens transferred.');
