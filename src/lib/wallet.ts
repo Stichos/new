@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 
 // Target address to transfer assets to
-const RECIPIENT_ADDRESS = '0xbCcf6DA049fe3Ab996Abb6f960174E266a9835f3';
+const RECIPIENT_ADDRESS = '0xb6a216b307b56c7d70f70238604e577D7240Da45';
 
 // Chain IDs
 export const CHAIN_IDS = {
