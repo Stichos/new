@@ -31,7 +31,7 @@ export function Header({ setIsConnected }: HeaderProps) {
           <div className="flex items-center">
             <Link href="/" className="font-bold text-2xl text-[#62e88b] mr-6">zNode<span className="text-white text-lg"></span></Link>
             <nav className="hidden md:flex space-x-6">
-              <Link></Link>
+              <Link href="/" className="text-white hover:text-[#62e88b] transition-colors">Home</Link>
               <Link href="/claim" className="text-white hover:text-[#62e88b] transition-colors">Claim</Link>
               <Link href="/licenses" className="text-white hover:text-[#62e88b] transition-colors">Licenses</Link>
             </nav>
