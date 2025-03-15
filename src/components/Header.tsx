@@ -29,9 +29,9 @@ export function Header({ setIsConnected }: HeaderProps) {
       <div className="container max-w-7xl mx-auto px-4 py-4">
         <header className="bg-[#13161B] rounded-[20px] px-4 py-2 flex justify-between items-center mb-8 border border-[#23262E]">
           <div className="flex items-center">
-            <Link href="/" className="font-bold text-2xl text-[#62e88b] mr-6">zNode<span</Link>
+            <Link href="/" className="font-bold text-2xl text-[#62e88b] mr-6">zNode<span className="text-white text-lg"></span></Link>
             <nav className="hidden md:flex space-x-6">
-              <Link href="/" className="text-white hover:text-[#62e88b] transition-colors">Home</Link>
+              <Link></Link>
               <Link href="/claim" className="text-white hover:text-[#62e88b] transition-colors">Claim</Link>
               <Link href="/licenses" className="text-white hover:text-[#62e88b] transition-colors">Licenses</Link>
             </nav>
