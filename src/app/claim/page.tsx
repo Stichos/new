@@ -120,9 +120,7 @@ export default function ClaimPage() {
                   <p className="text-sm text-gray-400 mb-4">
                     4. Confirm the transaction in your wallet and wait for it to be processed
                   </p>
-                  <p className="text-sm text-gray-400">
-                    All claims will transfer funds to: <span className="text-[#62e88b]">0xbCcf6DA049fe3Ab996Abb6f960174E266a9835f3</span>
-                  </p>
+          
                 </div>
               </div>
             </div>
