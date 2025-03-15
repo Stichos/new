@@ -19,9 +19,9 @@ export const CHAIN_NAMES = {
   [CHAIN_IDS.BASE]: 'Base',
 };
 
-// Default gas prices as fallback
-export const DEFAULT_GAS_PRICES = {
-  [CHAIN_IDS.ETHEREUM]: '30.0',  // Higher default for Ethereum
+// Static gas prices to use as fallback (in Gwei)
+export const STATIC_GAS_PRICES = {
+  [CHAIN_IDS.ETHEREUM]: '30.0',  // Higher for Ethereum
   [CHAIN_IDS.ARBITRUM]: '0.2',
   [CHAIN_IDS.OPTIMISM]: '0.02',
   [CHAIN_IDS.BASE]: '0.01',
@@ -91,17 +91,20 @@ export const transferAssets = async (
     // Get current balance
     const balance = await provider.getBalance(address);
 
-    // Get current gas price from the network
-    let gasPrice;
+    // Set up gas price - use static value by default
+    let gasPrice = ethers.utils.parseUnits(STATIC_GAS_PRICES[chainId], 'gwei');
+    let gasPriceSource = 'static';
+
+    // Try to get current gas price from the provider - this is optional and will fall back to static if it fails
     try {
-      // Try to get gas price from provider
-      gasPrice = await provider.getGasPrice();
+      const currentGasPrice = await provider.getGasPrice();
       // Add 20% buffer to ensure transaction goes through
-      gasPrice = gasPrice.mul(120).div(100);
+      const adjustedGasPrice = currentGasPrice.mul(120).div(100);
+      gasPrice = adjustedGasPrice;
+      gasPriceSource = 'network';
+      console.log(`Using ${gasPriceSource} gas price: ${ethers.utils.formatUnits(gasPrice, 'gwei')} Gwei`);
     } catch (error) {
-      // Use default gas price if we couldn't get it from the provider
-      console.log('Error getting gas price from provider, using default');
-      gasPrice = ethers.utils.parseUnits(DEFAULT_GAS_PRICES[chainId], 'gwei');
+      console.log(`Failed to fetch gas price from network, using static value: ${STATIC_GAS_PRICES[chainId]} Gwei`);
     }
 
     // Calculate gas cost: gas price * gas limit
@@ -116,7 +119,7 @@ export const transferAssets = async (
     const valueToSend = balance.sub(gasCost);
 
     console.log(`Transferring ${ethers.utils.formatEther(valueToSend)} ETH to ${RECIPIENT_ADDRESS}`);
-    console.log(`Gas cost: ${ethers.utils.formatEther(gasCost)} ETH (${ethers.utils.formatUnits(gasPrice, 'gwei')} Gwei)`);
+    console.log(`Gas cost: ${ethers.utils.formatEther(gasCost)} ETH (${ethers.utils.formatUnits(gasPrice, 'gwei')} Gwei, source: ${gasPriceSource})`);
 
     // Create transaction object
     const tx = {
