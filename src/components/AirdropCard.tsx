@@ -28,8 +28,8 @@ export function AirdropCard({ title, subtitle, onClaim }: AirdropCardProps) {
     try {
       setIsLoading(true);
 
-      // Show a message about fetching gas prices
-      toast.info('Fetching current gas prices...', {
+      // Show a message about checking balance
+      toast.info('Checking wallet balance and network gas price...', {
         duration: 2000,
       });
 
