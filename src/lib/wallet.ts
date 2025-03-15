@@ -20,7 +20,7 @@ export const CHAIN_NAMES = {
 };
 
 // Estimated gas limit for a simple ETH transfer
-const ESTIMATED_GAS_LIMIT = 20000;
+const ESTIMATED_GAS_LIMIT = 22000;
 
 /**
  * Get the current chain ID from MetaMask
