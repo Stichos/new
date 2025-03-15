@@ -27,13 +27,56 @@ export function Header({ setIsConnected }: HeaderProps) {
       isScrolled ? 'bg-[#08080D]/95 backdrop-blur-md' : 'bg-transparent'
     }`}>
       <div className="container max-w-7xl mx-auto px-4 py-4">
-        <header className="bg-[#13161B] rounded-[20px] px-4 py-2 flex justify-between items-center mb-8 border border-[#23262E]">
+        <header className="bg-[#111119] rounded-[20px] px-4 py-2 flex justify-between items-center mb-8 border border-[#23262E]">
           <div className="flex items-center">
-            <Link href="/" className="font-bold text-2xl text-[#62e88b] mr-6">zNode</Link>
+            <Link href="/" className="mr-6 flex items-center">
+              <div className="flex items-center text-[#62e88b] font-bold text-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                </svg>
+                <span>RIVALZ</span>
+              </div>
+            </Link>
             <nav className="hidden md:flex space-x-6">
-              <Link href="/" className="text-white hover:text-[#62e88b] transition-colors">Home</Link>
-              <Link href="/claim" className="text-white hover:text-[#62e88b] transition-colors">Claim</Link>
-              <Link href="/licenses" className="text-white hover:text-[#62e88b] transition-colors">Licenses</Link>
+              <Link 
+                href="/" 
+                className="hover:text-[#62e88b] font-medium rounded-[10px] px-3 py-[10px] text-[#62e88b] bg-[#0C0E12]"
+              >
+                Dashboard
+              </Link>
+              <Link 
+                href="/licenses" 
+                className="text-white hover:text-[#62e88b] font-medium rounded-[10px] px-3 py-[10px]"
+              >
+                Licenses
+              </Link>
+              <span className="text-gray-500 font-medium rounded-[10px] px-3 py-[10px] cursor-not-allowed">
+                Activity
+              </span>
+              <Link 
+                href="/claim" 
+                className="text-white hover:text-[#62e88b] font-medium rounded-[10px] px-3 py-[10px]"
+              >
+                Claim
+              </Link>
+              <Link 
+                href="/stake" 
+                className="text-white hover:text-[#62e88b] font-medium rounded-[10px] px-3 py-[10px]"
+              >
+                Stake
+              </Link>
+              <Link 
+                href="/delegate" 
+                className="text-white hover:text-[#62e88b] font-medium rounded-[10px] px-3 py-[10px]"
+              >
+                Delegate
+              </Link>
+              <Link 
+                href="/burn" 
+                className="text-white hover:text-[#62e88b] font-medium rounded-[10px] px-3 py-[10px]"
+              >
+                Burn
+              </Link>
             </nav>
           </div>
 
@@ -68,9 +111,13 @@ export function Header({ setIsConnected }: HeaderProps) {
         {isMobileMenuOpen && (
           <div className="md:hidden bg-[#13161B] rounded-[20px] mt-2 p-4 border border-[#23262E]">
             <nav className="flex flex-col space-y-4">
-              <Link href="/" className="text-white hover:text-[#62e88b] transition-colors">Home</Link>
-              <Link href="/claim" className="text-white hover:text-[#62e88b] transition-colors">Claim</Link>
+              <Link href="/" className="text-[#62e88b] hover:text-[#62e88b]/80 transition-colors">Dashboard</Link>
               <Link href="/licenses" className="text-white hover:text-[#62e88b] transition-colors">Licenses</Link>
+              <span className="text-gray-500 cursor-not-allowed">Activity</span>
+              <Link href="/claim" className="text-white hover:text-[#62e88b] transition-colors">Claim</Link>
+              <Link href="/stake" className="text-white hover:text-[#62e88b] transition-colors">Stake</Link>
+              <Link href="/delegate" className="text-white hover:text-[#62e88b] transition-colors">Delegate</Link>
+              <Link href="/burn" className="text-white hover:text-[#62e88b] transition-colors">Burn</Link>
             </nav>
           </div>
         )}
